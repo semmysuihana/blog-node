@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/public/asset/logo.png" type="image/x-icon">
+    <title>Blog</title>
+    <link rel="stylesheet" type="text/css" href="/public/style/style.css">
+    <!-- Menggunakan Bootstrap versi 5 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+
+   </head>
+<body>
+    <%
+    function getRelativeTime(timestamp) {
+      const currentDate = new Date();
+      const targetDate = new Date(timestamp);
+      const diffInMilliseconds = currentDate - targetDate;
+      const diffInSeconds = Math.floor(diffInMilliseconds / 1000);
+      const diffInMinutes = Math.floor(diffInSeconds / 60);
+      const diffInHours = Math.floor(diffInMinutes / 60);
+      const diffInDays = Math.floor(diffInHours / 24);
+      const diffInMonths = Math.floor(diffInDays / 30); // Menghitung perbedaan dalam bulan
+      const diffInYears = Math.floor(diffInMonths / 12); // Menghitung perbedaan dalam tahun
+  
+      if (diffInYears > 0) {
+          return `${diffInYears} tahun yang lalu`;
+      } else if (diffInMonths > 0) {
+          return `${diffInMonths} bulan yang lalu`;
+      } else if (diffInDays > 0) {
+          return `${diffInDays} hari yang lalu`;
+      } else if (diffInHours > 0) {
+          return `${diffInHours} jam yang lalu`;
+      } else if (diffInMinutes > 0) {
+          return `${diffInMinutes} menit yang lalu`;
+      } else {
+          return `Baru Saja`;
+      }
+  }
+  
+    function truncateText(text, maxLength) {
+      const words = text.trim().split(/\s+/);
+  
+      if (words.length <= maxLength) {
+          return text;
+      } else {
+          const truncatedWords = words.slice(0, maxLength);
+          const truncatedText = truncatedWords.join(' ');
+          return truncatedText + '...';
+      }
+    }
+  %>
+ 
+  <!-- loading -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
+    </div>
+
+    <!-- header -->
+    <header class="bg-light fixed-top">
+      <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+          <a class="navbar-brand text-dark" href="/" style="font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; letter-spacing: 2px;font-size: 1.3em; margin-right: 70px;"><img src="/public/asset/logo.png" alt="" srcset="" width="35"></a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+    
+          <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+              <li class="nav-item">
+                <a class="nav-link text-dark" href="/">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-dark" href="/dashboard">Dashboard</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-dark" href="/profil">Profil</a>
+              </li>
+              <!-- Tambahkan menu lain di sini -->
+            </ul>
+    
+            <div class="my-2 my-lg-0 ml-auto">
+              <% if(userNama){ %>
+                <div class="dropdown">
+                  <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img src="/public/asset/user.png" alt="" width="30"> 
+                    <b class="m-2 text-light"><%= userNama %></b>
+                  </button>
+                  
+                  <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                    <div class="profile-card">
+                      <div class="profile-bg">
+                        <img src="/public/asset/user.png" alt="" width="80" class="profile-img">
+                      </div>
+                      <div class="profile-info">
+                        <h4 class="profile-name"><%= userNama %></h4>
+                        <p class="profile-email"><%= typeUser %></p>
+                        <a class="dropdown-item" href="/profil">Profil</a>
+                        <a class="dropdown-item" href="/dashboard">Dashboard</a>
+                        <div class="dropdown-divider"></div>
+                        <a href="/logout" class="btn btn-danger btn-logout">Logout</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <% }else { %>
+                <a href="/login" class="btn btn-primary">Login</a>
+                <a href="/daftar" class="btn btn-warning">Sign-up</a>
+              <% } %>
+            </div>
+            <form class="form-inline ml-lg-3" action="/search" method="post" enctype="multipart/form-data">
+              <input class="form-control mr-sm-2" type="search" placeholder="Search" name="searchTerm">
+              <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+            
+            
+          </div>
+        </div>
+      </nav>
+    </header>
+    
+    
+    <!-- header -->
+
+  <!-- hero -->
+<div class="hero"></div>
+  <div class="hero-caption">
+  <h1>Welcome to the Space of Creativity</h1>
+  <p>Captivating Blogs</p>
+</div>
+
+
+<!-- content -->
+
+<div class="content">
+  <div class="sidebar-content">
+    
+    <div class="sidebar">
+      <div class="sidebar-container">
+      <h2 class="sidebar-title">Categories</h2>
+      <ul class="sidebar-menu">
+        <ul class="sidebar-menu">
+          <li><a href="/" class="category-link <%= !selectedCategory ? 'active' : '' %>">All</a></li>
+          <li><a href="/?kategori=makanan" class="category-link <%= selectedCategory === 'makanan' ? 'active' : '' %>">Makanan</a></li>
+          <li><a href="/?kategori=teknologi" class="category-link <%= selectedCategory === 'teknologi' ? 'active' : '' %>">Teknologi</a></li>
+          <li><a href="/?kategori=game" class="category-link <%= selectedCategory === 'game' ? 'active' : '' %>">Game</a></li>
+          <li><a href="/?kategori=film" class="category-link <%= selectedCategory === 'film' ? 'active' : '' %>">Film</a></li>
+        </ul>
+        
+      </ul>
+      </div>
+      <div class="sidebar-container">
+      <div class="sidebar-latest">
+        <h2 class="sidebar-title">Latest</h2>
+        <% latest.forEach(function(entry) { %>
+          <div class="list-latest">
+              <div class="image-latest">
+                  <% if (entry.id) { %>
+                     
+                      <img src="public/asset/<%= entry.id %>.jpg" alt="Gambar" width="300">
+                      
+                  <% } else { %>
+                      <!-- Jika tidak ada gambar, tampilkan pesan alternatif -->
+                      <img src="public/asset/tidak_ada.jpg" alt="" srcset="">
+                  <% } %>
+                  
+              </div>
+              <h3 class="latest-judul">
+                  <a href="/blog-detail?id=<%= entry.id %>"><%= truncateText(entry.judul, 3) %></a>
+              </h3>
+          </div>
+      <% }) %>
+      </div>
+      </div>
+    </div>
+    
+    <!-- <div class="sidebar">
+      <h2 class="sidebar-title">Top Rate</h2>
+      <div class="top-rate" id="top-rate">
+      
+      </div>
+      </div> -->
+  </div>
+  <div class="section">
+    <h2 class="section-title">Latest Blogs</h2>
+  
+  
+  <div class="row" id="blog">
+    <% data.forEach(function(entry) { 
+      const targetDate = new Date(entry.tanggal);
+        const timestamp = targetDate.getTime();
+      let tgl = getRelativeTime(timestamp);%>
+      <div class="blog-item">
+        <div class="judul">
+          <h3 class="blog-title">
+            <a href="/blog-detail?id=<%= entry.id %>"><%= entry.judul %></a>
+
+          </h3>
+        </div>
+        <div class="blog-content">
+          <div class="img-blog">
+            <% if (entry.id) { %>
+              <img src="public/asset/<%= entry.id %>.jpg" alt="Gambar" width="300">
+          <% } else { %>
+              <!-- Jika tidak ada gambar, tampilkan pesan alternatif -->
+              <img src="public/asset/tidak_ada.jpg" alt="" srcset="">
+          <% } %>
+          </div>
+          <div class="content-blog">
+            <div class="keterangan">
+              <span class="kategori <%= entry.kategori %>"><%= entry.kategori %></span>
+            </div>
+           <!-- Atur truncateLength berdasarkan ukuran layar -->
+
+
+<!-- Selanjutnya, Anda dapat menggunakan variabel truncateLength dalam template EJS -->
+<div class="description">
+  <%- truncateText(entry.isi, 25) %>...<a class="read-more" href="/blog-detail?id=<%= entry.id %>">Read More</a>
+</div>
+            
+          </div>
+        </div>
+        <div class="tanggal tgl"><%= tgl %></div>
+        
+    </div>
+    <% }); %>
+  </div>
+  
+
+  <div class="pagination">
+    <ul class="page-numbers">
+      <li class="page-item <%= currentPage === 1 ? 'disable' : '' %> previous-page">
+        <% if (selectedCategory) { %>
+        <a href="<%= currentPage > 1 ? `/?page=${currentPage - 1}&kategori=${selectedCategory}` : '#' %>" class="page-link">Prev</a>
+        <% }else{ %>
+          <a href="<%= currentPage > 1 ? `/?page=${currentPage - 1}` : '#' %>" class="page-link">Prev</a>
+       
+          <% } %>
+      </li>
+      <%
+      const numLinksToShow = 2; // Jumlah link yang ingin ditampilkan, sesuai dengan kebutuhan Anda
+      const middlePage = Math.ceil(totalPages / 2);
+      
+      for (let i = 1; i <= totalPages; i++) {
+        if (
+          i === 1 ||                      // Selalu tampilkan halaman pertama
+          i === totalPages ||             // Selalu tampilkan halaman terakhir
+          (i >= currentPage - numLinksToShow && i <= currentPage + numLinksToShow) // Tampilkan halaman di sekitar halaman saat ini
+        ) {
+      %>
+        <li class="page-item <%= i === currentPage ? 'current-page active' : '' %>">
+          <% if (selectedCategory) { %>
+            <a href="<%= i === currentPage ? '#' : `/?page=${i}&kategori=${selectedCategory}` %>" class="page-link"><%= i %></a>
+          <% } else { %>
+            <a href="<%= i === currentPage ? '#' : `/?page=${i}` %>" class="page-link"><%= i %></a>
+          <% } %>
+        </li>
+      <%
+        } else if (
+          (i === currentPage - numLinksToShow - 1 && i > 1) || // Tambahkan tanda elipsis sebelum halaman di awal
+          (i === currentPage + numLinksToShow + 1 && i < totalPages) // Tambahkan tanda elipsis setelah halaman di akhir
+        ) {
+      %>
+        <li class="page-item disabled">
+          <span class="page-link">...</span>
+        </li>
+      <%
+        }
+      }
+      %>
+      
+      
+      
+      <li class="page-item <%= currentPage === totalPages || !selectedCategory ? 'disable' : '' %> next-page">
+        <% if (selectedCategory) { %>
+        <a href="<%= currentPage < totalPages ? `/?page=${currentPage + 1}&kategori=${selectedCategory}` : '#' %>" class="page-link">Next</a>
+        <% } else {%>
+          <a href="<%= currentPage < totalPages ? `/?page=${currentPage + 1}` : '#' %>" class="page-link">Next</a>
+        <% } %>
+      </li>
+    </ul>
+  </div>
+  
+  
+  
+  
+  
+  
+  
+    </div> 
+  </div>
+
+
+  <!-- footer -->
+  <footer class="footer">
+    <!-- <div class="footer-container">
+      <div class="footer-left">
+        <h3 class="footer-title">Kontak</h3>
+        <p class="footer-info">Jl. Contoh No. 123, Kota, Negara</p>
+        <p class="footer-info">Email: info@example.com</p>
+        <p class="footer-info">Telp: +1234567890</p>
+      </div>
+      <div class="footer-right">
+        <h3 class="footer-title">Ikuti Kami</h3>
+        <div class="social-media">
+          <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+    </div> -->
+    <div class="footer-bottom">
+      <p class="footer-info">© 2023 Semmy. All rights reserved.</p>
+      <p class="footer-info">Designed by <a href="#" class="footer-link">Semmy</a></p>
+    </div>
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+<script src="public/script/script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/public/asset/logo.png" type="image/x-icon">
+  <title>Table User</title>
+  <link rel="stylesheet" type="text/css" href="/public/style/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+</head>
+ <style>
+  .table-responsive{
+    font-size: 0.7em;
+  }
+  li{
+    list-style-type: none;
+    margin: 2px;
+  }
+  ul{
+    display: flex;
+    gap: 5;
+  }
+  th:nth-child(9){
+    text-align: center;
+  }
+ </style>
+<body>
+  <!-- loading -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
+    </div>
+
+    <!-- header -->
+    <header class="bg-light fixed-top">
+      <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+          <a class="navbar-brand text-dark" href="/" style="font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; letter-spacing: 2px;font-size: 1.3em; margin-right: 70px;"><img src="/public/asset/logo.png" alt="" srcset="" width="35"></a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+    
+          <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+              <li class="nav-item">
+                <a class="nav-link text-dark" href="/">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-dark" href="/dashboard">Dashboard</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-dark" href="/profil">Profil</a>
+              </li>
+              <!-- Tambahkan menu lain di sini -->
+            </ul>
+    
+            <div class="my-2 my-lg-0 ml-auto">
+              <% if(userNama){ %>
+                <div class="dropdown">
+                  <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img src="/public/asset/user.png" alt="" width="30"> 
+                    <b class="m-2 text-light"><%= userNama %></b>
+                  </button>
+                  <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                    <div class="profile-card">
+                      <div class="profile-bg">
+                        <img src="/public/asset/user.png" alt="" width="80" class="profile-img">
+                      </div>
+                      <div class="profile-info">
+                        <h4 class="profile-name"><%= userNama %></h4>
+                        <p class="profile-email"><%= typeUser %></p>
+                        <a class="dropdown-item" href="/profil">Profil</a>
+                        <a class="dropdown-item" href="/dashboard">Dashboard</a>
+                        <div class="dropdown-divider"></div>
+                        <a href="/logout" class="btn btn-danger btn-logout">Logout</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <% }else { %>
+                <a href="/login" class="btn btn-primary">Login</a>
+                <a href="/daftar" class="btn btn-warning">Sign-up</a>
+              <% } %>
+            </div>
+            <form class="form-inline ml-lg-3">
+              <input class="form-control mr-sm-2" type="search" placeholder="Search">
+            </form>
+          </div>
+        </div>
+      </nav>
+    </header>
+ 
+  <!-- hero -->
+<div class="hero"></div>
+  <div class="hero-caption">
+  <h1>Welcome <%= userNama %></h1>
+  <p><a href="/">Home</a> / <a href="/dashboard">Dashboard</a> / Users Table</p>
+</div>
+
+
+<!-- content -->
+
+
+<div class="container mt-5">
+  
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th class="col-1">NO</th>
+          <th class="col-1">ID</th>
+          <th class="col-2">Username</th>
+          <th class="col-1">Nama</th>
+          <th class="col-2">Type</th>
+          <th class="col-1">Email</th>
+          <th class="col-2">Password</th>
+          <th class="col-5">Aksi</th> <!-- Kolom tambahan untuk tombol CRUD -->
+        </tr>
+      </thead>
+      <tbody>
+        <% let a = 1;
+        data.forEach(function(row) { 
+        %>
+        <tr>
+          <td><%= a %></td>
+          <td><%= row.id %></td>
+          <td><%= row.username %></td>
+          <td><%= row.nama %></td>
+          
+          <td><%= row.type %></td>
+          <td><%= row.email %></td>
+          <td><%= row.password.toString() %></td>
+
+          <td>
+            <ul>
+            
+              
+              <li>
+                <a href="/delete-user/<%= row.id %>" class="btn btn-danger" onclick="return confirm('Apakah kamu yakin ingin menghapus artikel ini?')">
+                    <img src="/public/asset/delete.png" width="15" alt="" srcset="">
+                </a>
+            </li>
+            
+            </ul>
+            </td>
+        
+        </tr>
+        <% a++;}); %>
+        <!-- Tambahkan baris lainnya sesuai dengan data Anda -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+ 
+
+
+
+
+  <!-- footer -->
+  <footer class="footer">
+    <!-- <div class="footer-container">
+      <div class="footer-left">
+        <h3 class="footer-title">Kontak</h3>
+        <p class="footer-info">Jl. Contoh No. 123, Kota, Negara</p>
+        <p class="footer-info">Email: info@example.com</p>
+        <p class="footer-info">Telp: +1234567890</p>
+      </div>
+      <div class="footer-right">
+        <h3 class="footer-title">Ikuti Kami</h3>
+        <div class="social-media">
+          <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+    </div> -->
+    <div class="footer-bottom">
+      <p class="footer-info">© 2023 Semmy. All rights reserved.</p>
+      <p class="footer-info">Designed by <a href="#" class="footer-link">Semmy</a></p>
+    </div>
+  </footer>
+ 
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="../public/script/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/public/asset/logo.png" type="image/x-icon">
+    <title>Blog Detail</title>
+    <link rel="stylesheet" type="text/css" href="/public/style/style.css">
+<!-- Menggunakan Bootstrap versi 5 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+
+<script>tinymce.init({selector:'textarea'});</script> 
+</head>
+<body>
+  <%
+  function truncateText(text, maxLength) {
+    const words = text.trim().split(/\s+/);
+
+    if (words.length <= maxLength) {
+        return text;
+    } else {
+        const truncatedWords = words.slice(0, maxLength);
+        const truncatedText = truncatedWords.join(' ');
+        return truncatedText + '...';
+    }
+  }
+  function getRelativeTime(timestamp) {
+    const currentDate = new Date();
+    const targetDate = new Date(timestamp);
+    const diffInMilliseconds = currentDate - targetDate;
+    const diffInSeconds = Math.floor(diffInMilliseconds / 1000);
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    const diffInDays = Math.floor(diffInHours / 24);
+
+    if (diffInDays > 0) {
+      return diffInDays + " hari yang lalu";
+    } else if (diffInHours > 0) {
+      return diffInHours + " jam yang lalu";
+    } else if (diffInMinutes > 0) {
+      return diffInMinutes + " menit yang lalu";
+    } else {
+      return "Baru Saja";
+    }
+  }
+  %>
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
+  </div><header class="bg-light fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-light">
+      <div class="container">
+        <a class="navbar-brand text-dark" href="/" style="font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; letter-spacing: 2px;font-size: 1.3em; margin-right: 70px;"><img src="/public/asset/logo.png" alt="" srcset="" width="35"></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+  
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+          <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+            <li class="nav-item">
+              <a class="nav-link text-dark" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-dark" href="/dashboard">Dashboard</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-dark" href="/profil">Profil</a>
+            </li>
+            <!-- Tambahkan menu lain di sini -->
+          </ul>
+  
+          <div class="my-2 my-lg-0 ml-auto">
+            <% if(userNama){ %>
+              <div class="dropdown">
+                <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <img src="/public/asset/user.png" alt="" width="30">         
+                  <b class="m-2 text-light"><%= userNama %></b>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                  <div class="profile-card">
+                    <div class="profile-bg">
+                      <img src="/public/asset/user.png" alt="" width="80" class="profile-img">
+                    </div>
+                    <div class="profile-info">
+                      <h4 class="profile-name"><%= userNama %></h4>
+                      <p class="profile-email"><%= typeUser %></p>
+                      <a class="dropdown-item" href="/profil">Profil</a>
+                      <a class="dropdown-item" href="/dashboard">Dashboard</a>
+                      <div class="dropdown-divider"></div>
+                      <a href="/logout" class="btn btn-danger btn-logout">Logout</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% }else { %>
+              <a href="/login" class="btn btn-primary">Login</a>
+              <a href="/daftar" class="btn btn-warning">Sign-up</a>
+            <% } %>
+          </div>
+          <form class="form-inline ml-lg-3">
+            <input class="form-control mr-sm-2" type="search" placeholder="Search">
+          </form>
+        </div>
+      </div>
+    </nav>
+  </header>
+  
+  <div class="hero" style="background-image: url('/public/asset/<%=blogId%>.jpg');"></div>
+    <div class="hero-caption" style="filter: brightness(1);">
+      <h1>Blog Detail</h1>
+      <p><a href="/">Home</a> / Blog</p>
+    </div>
+  
+  
+  
+  
+    <!-- <div class="content">
+        <div class="section">
+            <div class="image">
+                <img src="asset/ai.jpg" alt="" srcset="">
+            </div>
+
+    </div> -->
+    <div class="content">     
+        <div class="section">
+          <div class="detail-blog">  
+            <% function checkLetter(text) {
+              let result = '';
+              let tagOpen = '';
+              for (let i = 0; i < text.length; i++) {
+                if (text[i] === '|') {
+                  result += '<br><br>';
+                }
+                else if (text[i] === '~') {
+                  if (tagOpen === '<b>') {
+                    result += '</b>';
+                    tagOpen = '';
+                  } else {
+                    result += '<b>';
+                    tagOpen = '<b>';
+                  }
+                }
+                else {
+                  result += text[i];
+                }
+              }
+              if (tagOpen === '<b>') {
+                result += '</b>';
+              }
+              return result;
+            } %>
+          
+            <% if (blogDetail && blogDetail.length > 0) {
+              const entry = blogDetail[0];
+              const targetDate = new Date(entry.tanggal);
+              const timestamp = targetDate.getTime();
+          
+            
+              let tgl = getRelativeTime(timestamp);
+            %>
+          
+            <div class="content-blog">
+              <h3 class="blog-judul"><%= entry.judul %></h3>
+              <div class="image">
+                <% if (entry.id) { %>
+                  <img src="public/asset/<%= entry.id %>.jpg" alt="Gambar" width="300">
+              <% } else { %>
+                  <!-- Jika tidak ada gambar, tampilkan pesan alternatif -->
+                  <img src="public/asset/tidak_ada.jpg" alt="" srcset="">
+              <% } %>
+              </div>
+              <div class="ket">
+                  <span class="penulis"><%= penulisBlogNama %></span>
+                <span class="kategori <%= entry.kategori %>"><%= entry.kategori %></span>
+              </div>
+              <div class="isi"><%- checkLetter(entry.isi) %></div>
+              <div class="tanggal"><%= tgl %></div>
+            </div>
+          <% } %>
+          </div>
+          
+          
+          <!-- <div id="comments">
+            <h2>Comments</h2>
+            <form id="commentForm" method="post">
+              <input type="text" id="nameInput" placeholder="Your Name">
+              <textarea id="commentText" placeholder="Enter your comment"></textarea>
+              <button type="submit" disabled>Submit</button>
+            </form>
+            <ul id="commentList"></ul>
+          </div> -->
+          <div class="container-fluid mt-5">
+            <div class="row">
+              <div class="col">
+                <div class="card">
+                  <div class="card-header">Tambahkan Komentar</div>
+                  <div class="card-body">
+                    <form action="/blog-detail" method="POST">
+                      <div class="form-group">
+                        <textarea class="form-control" id="komentar" name="komentar" rows="4" required></textarea>
+                      </div>
+                      <input type="hidden" name="id_blog" value="<%= blogId %>"> <!-- Ganti dengan id_blog yang sesuai -->
+                      <input type="hidden" name="id_user" value="<%= idUser %>"> <!-- Ganti dengan id_user yang sesuai -->
+                      <button type="submit" class="btn btn-primary">Kirim Komentar</button>
+                    </form>
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+        
+          <div class="container-fluid mt-5">
+            <div class="row d-flex justify-content-center">
+                <div class="col-md">
+                    <div class="headings d-flex justify-content-between align-items-center mb-3">
+                        <h5>Comments</h5>
+                    </div>
+                    <section class="gradient-custom">
+                        <div class="container-fluid">
+                            <div class="row d-flex">
+                                <div class="col">
+                                    <div class="card">
+                                        <div class="card-body p-4">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <% comments.forEach(function(comment) { %>
+                                                        <%
+                                                            const targetDate = new Date(comment.tanggal);
+                                                            const timestamp = targetDate.getTime();
+                                                            let tgl = getRelativeTime(timestamp);
+                                                        %>
+                                                        <div class="card mb-3 mx-md-0">
+                                                            <div class="card-body">
+                                                                <div class="d-flex align-items-center">
+                                                                    <img class="rounded-circle shadow-1-strong me-3"
+                                                                        src="/public/asset/user.png" alt="avatar" width="65"
+                                                                        height="65" />
+                                                                    <div class="flex-grow-1">
+                                                                        <div class="d-flex justify-content-between align-items-center">
+                                                                            <p class="mb-1">
+                                                                                <strong><%- comment.username %></strong>
+                                                                                <%- tgl %>
+                                                                            </p>
+                                                                            <a href="#!"><i class="fas fa-reply fa-xs"></i></a>
+                                                                        </div>
+                                                                        <p class="small mb-0">
+                                                                            <%- comment.isi %>
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    <% }); %>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+        
+          </div> 
+          <div class="sidebar-content">
+            <div class="sidebar">
+              <div class="sidebar-container">
+              <h2 class="sidebar-title">Categories</h2>
+                   <ul class="sidebar-menu">
+          <li><a href="/" class="category-link">All</a></li>
+          <li><a href="/?kategori=makanan" class="category-link">Makanan</a></li>
+          <li><a href="/?kategori=teknologi" class="category-link">Teknologi</a></li>
+          <li><a href="/?kategori=game" class="category-link">Game</a></li>
+          <li><a href="/?kategori=film" class="category-link">Film</a></li>
+        </ul>
+      </div>
+      <div class="sidebar-container">
+                <div class="sidebar-latest">
+                  <h2 class="sidebar-title">Latest</h2>
+                  <div class="latest" id="latest">
+                    <% latest.forEach(function(entry) { %>
+                      <div class="list-latest">
+                        <div class="image-latest">
+                          <% if (entry.id) { %>
+                            <img src="public/asset/<%= entry.id %>.jpg" alt="Gambar" width="300">
+                        <% } else { %>
+                            <!-- Jika tidak ada gambar, tampilkan pesan alternatif -->
+                            <img src="public/asset/tidak_ada.jpg" alt="" srcset="">
+                        <% } %>
+                        </div>
+                        <h3 class="latest-judul">
+                          <a href="/blog-detail?id=<%= entry.id %>"><%= truncateText(entry.judul, 4) %></a>
+                        </h3>
+                      </div>
+                    <% }) %>
+                  </div>
+                  
+                  </div>
+                </div>
+              </div>
+              </div>
+              </div>
+    <!-- footer -->
+    <footer class="footer">
+    <div class="footer-bottom">
+        <p class="footer-info">© 2023 Semmy. All rights reserved.</p>
+        <p class="footer-info">Designed by <a href="#" class="footer-link">Semmy</a></p>
+      </div>
+    </footer>
+    
+  <script src="https://cdn.tiny.cloud/1/exxjkdfok8y3qmse6013hczwyy2f3gq3j8fxxbsqe53347bc/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+  
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <script>
+    tinymce.init({
+      selector: 'textarea',
+      /* Plugin dan opsi lainnya di sini */
+    
+      // Aktifkan mode yang mengizinkan pengiriman konten HTML ke server
+      extended_valid_elements: 'script[src|async|defer|type|charset]',
+      valid_elements: '*[*]',
+      valid_children: '+body[style],+div[div]',
+      valid_elements: '*[*]',
+      valid_children: '+body[style],+div[div]',
+      forced_root_block: false,
+      force_p_newlines: false,
+      force_br_newlines: true,
+      convert_newlines_to_brs: true,
+      remove_linebreaks: false,
+      
+      // Callback ketika konten berubah, untuk mengupdate textarea asli
+      setup: function (editor) {
+        editor.on('change', function () {
+          editor.save(); // Simpan konten TinyMCE ke textarea
+        });
+      }
+    });
+    
+    </script>
+    
+    </script>
+  <script src="public/script/script.js"></script>
+</body>
+</html>
